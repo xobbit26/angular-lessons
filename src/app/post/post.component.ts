@@ -1,5 +1,6 @@
-import {Component, ContentChild, ElementRef, EventEmitter, Input, OnInit, Output} from '@angular/core';
-import {Post} from "../app.component";
+import { Component, OnInit } from '@angular/core';
+import { ActivatedRoute, ParamMap, Router, } from "@angular/router";
+import { Post, PostsService } from "../services/posts.service";
 
 @Component({
   selector: 'app-post',
@@ -7,18 +8,22 @@ import {Post} from "../app.component";
   styleUrls: ['./post.component.scss']
 })
 export class PostComponent implements OnInit {
-  @Input() post: Post
-  @ContentChild('info', {static: true}) infoRef: ElementRef
-  @Output() remove: EventEmitter<number> = new EventEmitter<number>();
+  post: Post
 
-  constructor() {
+  constructor(
+    private router: Router,
+    private route: ActivatedRoute,
+    private postsService: PostsService
+  ) {
   }
 
   ngOnInit(): void {
+    this.route.paramMap.subscribe((params:ParamMap) => {
+      this.post = this.postsService.getById(+params.get("id")!)
+    })
   }
 
-  onRemove($event: MouseEvent) {
-    console.log('removing post with id ', this.post.id)
-    this.remove.emit(this.post.id);
+  goToFourPost() {
+    this.router.navigate(['/posts', 44])
   }
 }
